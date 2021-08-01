@@ -46,3 +46,37 @@ INNER JOIN titles as ti
 WHERE de.to_date = '9999-01-01'
     AND (birth_date BETWEEN '1965-01-01' AND '1965-12-31')
 ORDER BY emp_no;
+
+--Create table with count retiring from each department
+SELECT COUNT(d.dept_name),
+	d.dept_name
+INTO retirement_dept
+FROM departments as d
+INNER JOIN dept_emp as de
+	ON (d.dept_no = de.dept_no)
+INNER JOIN retirement_info as ri
+	ON (de.emp_no = ri.emp_no)
+GROUP BY d.dept_name
+ORDER BY COUNT (d.dept_name) DESC;
+
+--Create table with count of mentors from each department
+SELECT COUNT(d.dept_name),
+	d.dept_name
+INTO mentorship_dept
+FROM departments as d
+INNER JOIN dept_emp as de
+	ON (d.dept_no = de.dept_no)
+INNER JOIN mentorship_eligibility as me
+	ON (de.emp_no = me.emp_no)
+GROUP BY d.dept_name
+ORDER BY COUNT (d.dept_name) DESC;
+
+--Create table with both mentor and retirement counts
+SELECT rd.count,
+    md.count,
+    rd.dept_name
+INTO mentor_retire
+FROM retirement_dept as rd
+INNER JOIN mentorship_dept as md
+    ON (rd.dept_name = md.dept_name)
+ORDER BY rd.count DESC;
